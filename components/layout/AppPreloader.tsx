@@ -69,22 +69,16 @@ export const AppPreloader: React.FC<AppPreloaderProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#090d16] text-white select-none transition-all duration-700 ease-out print:hidden cursor-pointer ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black text-white select-none transition-all duration-700 ease-out print:hidden cursor-pointer ${
         phase === "fading"
           ? "opacity-0 pointer-events-none scale-105 filter blur-xs"
           : "opacity-100 scale-100"
       }`}
-      title="Click anywhere or press any key to skip preloader"
+      title="Click anywhere or press any key to enter"
     >
-      {/* Ambient background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-[90px]" />
-      </div>
-
-      {/* Center: Liquid Glass Logo Reveal Engine */}
-      <div className="relative z-10 flex flex-col items-center justify-center">
-        <div className="w-[280px] sm:w-[340px] aspect-square rounded-3xl overflow-hidden relative shadow-2xl shadow-blue-950/60">
+      {/* Center: Liquid Glass Logo Reveal Engine - Fully Centered on Both Phone & Desktop */}
+      <div className="relative z-10 flex flex-col items-center justify-center p-4 w-full max-w-sm mx-auto text-center">
+        <div className="w-[240px] xs:w-[280px] sm:w-[340px] aspect-square rounded-3xl overflow-hidden relative shadow-2xl shadow-black ring-1 ring-white/10 mx-auto">
           <GlassReveal21st
             logo="/logo.jpg"
             className="w-full h-full"
@@ -103,20 +97,20 @@ export const AppPreloader: React.FC<AppPreloaderProps> = ({
           {/* Luxury Progress Bar */}
           <div className="w-44 h-1 bg-white/10 rounded-full overflow-hidden relative">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 rounded-full transition-all duration-75 ease-out shadow-sm shadow-blue-400/50"
+              className="h-full bg-gradient-to-r from-neutral-200 via-white to-neutral-400 rounded-full transition-all duration-75 ease-out shadow-xs"
               style={{ width: `${progress}%` }}
             />
           </div>
 
           {/* Dynamic Status Text */}
-          <p className="text-[11px] font-mono text-white/50 tracking-wider transition-all duration-200">
+          <p className="text-[11px] font-mono text-white/60 tracking-wider transition-all duration-200">
             {statusText}
           </p>
         </div>
       </div>
 
       {/* Subtle Hint */}
-      <div className="absolute bottom-6 text-[10px] font-mono text-white/20 tracking-widest uppercase">
+      <div className="absolute bottom-6 text-[10px] font-mono text-white/30 tracking-widest uppercase">
         Click anywhere to enter
       </div>
     </div>

@@ -102,11 +102,11 @@ export const FinancialDashboard: React.FC = () => {
   const PIE_COLORS = ["#24845B", "#B7791F", "#171717", "#777777"];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5 sm:space-y-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717]">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#171717]">
             Financial Overview
           </h1>
           <p className="text-xs text-[#777777] mt-1">
@@ -114,10 +114,10 @@ export const FinancialDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="w-full sm:w-auto">
           <Link
             href="/receipts/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#171717] hover:bg-[#222222] text-white rounded-lg text-xs font-medium transition shadow-xs"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#171717] hover:bg-[#222222] text-white rounded-lg text-xs font-medium transition shadow-xs"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Create Receipt</span>
@@ -126,13 +126,13 @@ export const FinancialDashboard: React.FC = () => {
       </div>
 
       {/* 4 Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-2.5 sm:space-y-3">
           <div className="flex items-center justify-between text-[#777777]">
             <span className="text-xs font-medium">Total Recorded Sales</span>
             <TrendingUp className="w-4 h-4 text-[#171717]" />
           </div>
-          <div className="font-mono text-2xl font-bold text-[#171717]">
+          <div className="font-mono text-xl sm:text-2xl font-bold text-[#171717]">
             {formatCurrency(totalRecordedSalesMinor, defaultCurrency)}
           </div>
           <div className="text-[11px] text-[#777777] flex items-center gap-1">
@@ -140,12 +140,12 @@ export const FinancialDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-2.5 sm:space-y-3">
           <div className="flex items-center justify-between text-[#777777]">
             <span className="text-xs font-medium">Recorded Payments</span>
             <CreditCard className="w-4 h-4 text-[#24845B]" />
           </div>
-          <div className="font-mono text-2xl font-bold text-[#24845B]">
+          <div className="font-mono text-xl sm:text-2xl font-bold text-[#24845B]">
             {formatCurrency(totalRecordedPaymentsMinor, defaultCurrency)}
           </div>
           <div className="text-[11px] text-[#24845B] font-medium">
@@ -153,12 +153,12 @@ export const FinancialDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-2.5 sm:space-y-3">
           <div className="flex items-center justify-between text-[#777777]">
             <span className="text-xs font-medium">Outstanding Balances</span>
             <AlertCircle className="w-4 h-4 text-[#C64B4B]" />
           </div>
-          <div className="font-mono text-2xl font-bold text-[#C64B4B]">
+          <div className="font-mono text-xl sm:text-2xl font-bold text-[#C64B4B]">
             {formatCurrency(totalOutstandingMinor, defaultCurrency)}
           </div>
           <div className="text-[11px] text-[#C64B4B]">
@@ -166,12 +166,12 @@ export const FinancialDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-[#E9E7E1] shadow-xs space-y-2.5 sm:space-y-3">
           <div className="flex items-center justify-between text-[#777777]">
             <span className="text-xs font-medium">Total Receipts</span>
             <ReceiptIcon className="w-4 h-4 text-[#171717]" />
           </div>
-          <div className="font-mono text-2xl font-bold text-[#171717]">
+          <div className="font-mono text-xl sm:text-2xl font-bold text-[#171717]">
             {totalReceiptsCount}
           </div>
           <div className="text-[11px] text-[#777777]">
@@ -181,9 +181,9 @@ export const FinancialDashboard: React.FC = () => {
       </div>
 
       {/* Analytics Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Monthly Activity Bar Chart */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-[#E9E7E1] shadow-xs space-y-4">
+        <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl border border-[#E9E7E1] shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold text-[#171717]">Sales & Collections Trend</h2>
@@ -219,7 +219,7 @@ export const FinancialDashboard: React.FC = () => {
         </div>
 
         {/* Status Distribution Pie Chart */}
-        <div className="bg-white p-6 rounded-xl border border-[#E9E7E1] shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white p-4 sm:p-6 rounded-xl border border-[#E9E7E1] shadow-xs space-y-4 flex flex-col justify-between">
           <div>
             <h2 className="text-sm font-semibold text-[#171717]">Receipt Status Breakdown</h2>
             <p className="text-xs text-[#777777]">Distribution across all receipts</p>

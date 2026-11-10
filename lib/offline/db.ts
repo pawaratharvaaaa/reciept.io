@@ -419,20 +419,10 @@ export async function seedInitialDataIfEmpty() {
     },
   ];
 
-  const defaultUser: UserProfile = {
-    id: "usr-admin-01",
-    email: "admin@craftstudio.in",
-    fullName: "Rohan Mehta (Admin)",
-    businessName: "Craft Studio & Labs Pvt Ltd",
-    businessCategory: "freelancer_services",
-    organizationId: defaultOrgId,
-    createdAt: new Date().toISOString(),
-  };
-
   await db.organizations.add(defaultOrg);
   await db.businessProfiles.add(defaultBusinessProfile);
   await db.customers.bulkAdd(sampleCustomers);
   await db.products.bulkAdd(sampleProducts);
   await db.receipts.bulkAdd(sampleReceipts);
-  await db.users.add(defaultUser);
+  // Zero accounts active by default: user must register or login first before using.
 }

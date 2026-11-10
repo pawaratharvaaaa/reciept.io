@@ -61,14 +61,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAllUsers(usersList);
 
       const savedUserId = localStorage.getItem("reciept_io_current_user_id");
-      let activeUser = usersList.find((u) => u.id === savedUserId);
-
-      if (!activeUser && usersList.length > 0) {
-        activeUser = usersList[0];
+      
+      // If previous session was old dummy seeded user, purge it so zero accounts are active by default
+      if (savedUserId === "usr-admin-01") {
+        try {
+          localStorage.removeItem("reciept_io_current_user_id");
+        } catch (e) {}
       }
 
+      const effectiveSavedId = localStorage.getItem("reciept_io_current_user_id");
+      const activeUser = usersList.find((u) => u.id === effectiveSavedId);
+
+      // Zero accounts active by default: user must register or login first before using
       if (activeUser) {
         await loadUserWorkspace(activeUser);
+      } else {
+        setUser(null);
+        setOrganization(null);
+        setBusinessProfile(null);
       }
       setIsLoading(false);
     }
@@ -233,15 +243,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    localStorage.removeItem("reciept_io_current_user_id");
-    // Switch to first available or reset
-    if (allUsers.length > 0) {
-      loadUserWorkspace(allUsers[0]);
-    } else {
-      setUser(null);
-      setOrganization(null);
-      setBusinessProfile(null);
-    }
+    try {
+      localStorage.removeItem("reciept_io_current_user_id");
+    } catch (e) {}
+    setUser(null);
+    setOrganization(null);
+    setBusinessProfile(null);
   };
 
   return (

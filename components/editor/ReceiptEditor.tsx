@@ -183,6 +183,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
   const [accentColor, setAccentColor] = useState<string>(
     initialReceipt?.templateConfig?.accentColor || "#171717"
   );
+  const [mobileTab, setMobileTab] = useState<"form" | "preview">("form");
 
   // On mount or profile change
   useEffect(() => {
@@ -445,11 +446,11 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8.5rem)] rounded-3xl border border-[#E5E3DC] shadow-sm overflow-hidden bg-white print:border-none print:shadow-none print:rounded-none print:h-auto print:overflow-visible">
+    <div className="flex flex-col h-auto lg:h-[calc(100vh-8.5rem)] w-full max-w-full min-w-0 rounded-2xl sm:rounded-3xl border border-[#E5E3DC] shadow-sm overflow-hidden bg-white print:border-none print:shadow-none print:rounded-none print:h-auto print:overflow-visible">
       {/* Top Action Bar */}
-      <div className="h-14 bg-white border-b border-[#EBE8E1] px-5 sm:px-6 flex items-center justify-between shrink-0 no-print">
+      <div className="h-auto py-2.5 px-3 sm:px-6 bg-white border-b border-[#EBE8E1] flex flex-wrap items-center justify-between gap-2 shrink-0 no-print">
         {/* Left Side: Receipt Type Switch & Receipt Number */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Segmented Switch for Sales vs Payment with Animated Sliding Spring Pill */}
           <div className="relative flex items-center bg-[#F4F2EC] p-1 rounded-full border border-[#E5E2D9]">
             {/* Sliding white pill indicator */}
@@ -461,7 +462,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
             <button
               type="button"
               onClick={() => setReceiptType("sales")}
-              className={`relative z-10 px-3.5 py-1 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative z-10 px-3 py-1 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
                 receiptType === "sales"
                   ? "text-[#171717]"
                   : "text-[#666666] hover:text-[#171717]"
@@ -472,7 +473,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
             <button
               type="button"
               onClick={() => setReceiptType("payment")}
-              className={`relative z-10 px-3.5 py-1 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+              className={`relative z-10 px-3 py-1 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
                 receiptType === "payment"
                   ? "text-[#171717]"
                   : "text-[#666666] hover:text-[#171717]"
@@ -482,7 +483,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
             </button>
           </div>
 
-          <div className="h-4 w-[1px] bg-[#E5E2D9]" />
+          <div className="hidden sm:block h-4 w-[1px] bg-[#E5E2D9]" />
 
           {/* Receipt Number Badge */}
           <div className="flex items-center gap-1.5 text-xs text-[#666666]">
@@ -636,10 +637,34 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
         </div>
       </div>
 
+      {/* Mobile Segmented Tab Switcher */}
+      <div className="grid grid-cols-2 lg:hidden w-full bg-[#F4F2EC] p-1 border-b border-[#E5E2D9] gap-1 no-print">
+        <button
+          type="button"
+          onClick={() => setMobileTab("form")}
+          className={`py-1.5 px-2 text-center text-xs font-semibold rounded-lg transition cursor-pointer ${
+            mobileTab === "form" ? "bg-white text-[#171717] shadow-xs" : "text-[#777777]"
+          }`}
+        >
+          Edit Form
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab("preview")}
+          className={`py-1.5 px-2 text-center text-xs font-semibold rounded-lg transition cursor-pointer ${
+            mobileTab === "preview" ? "bg-white text-[#171717] shadow-xs" : "text-[#777777]"
+          }`}
+        >
+          Receipt Preview
+        </button>
+      </div>
+
       {/* Main Dual-Panel Area */}
-      <div className="flex-1 flex overflow-hidden print:overflow-visible print:block">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden print:overflow-visible print:block">
         {/* LEFT PANEL: Editable Input Form */}
-        <div className="w-1/2 border-r border-[#E9E7E1] bg-white overflow-y-auto p-6 space-y-6 no-print">
+        <div className={`w-full lg:w-1/2 border-r border-[#E9E7E1] bg-white overflow-y-auto p-4 sm:p-6 space-y-6 no-print ${
+          mobileTab === "preview" ? "hidden lg:block" : "block"
+        }`}>
           {/* Section 1: Business Profile */}
           <div className="space-y-3 pb-6 border-b border-[#F2F0EA]">
             <div className="flex items-center justify-between">
@@ -651,7 +676,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
               <div>
                 <label className="block text-[#777777] mb-1">Business Name</label>
                 <input
@@ -689,7 +714,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
                   className="w-full px-3 py-1.5 rounded-md border border-[#E9E7E1] focus:outline-hidden focus:border-[#171717]"
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 sm:col-span-2">
                 <label className="block text-[#777777] mb-1">Address / Location</label>
                 <input
                   type="text"
@@ -703,7 +728,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
 
           {/* Section 2: Customer / Member Snapshot */}
           <div className="space-y-3 pb-6 border-b border-[#F2F0EA]">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="font-mono text-[11px] uppercase tracking-wider text-[#777777] font-semibold flex items-center gap-1.5">
                 <UserCheck className="w-3.5 h-3.5" />
                 {currentCategory === "gym_fitness" ? "Gym Member Details" : "Customer Information"}
@@ -727,7 +752,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
               <div>
                 <label className="block text-[#777777] mb-1">
                   {currentCategory === "gym_fitness" ? "Member Name *" : "Customer Name *"}
@@ -769,7 +794,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
                   className="w-full px-3 py-1.5 rounded-md border border-[#E9E7E1] focus:outline-hidden focus:border-[#171717]"
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1 sm:col-span-2">
                 <label className="block text-[#777777] mb-1">Billing / Residential Address</label>
                 <input
                   type="text"
@@ -782,7 +807,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
           </div>
 
           {/* Section 3: Receipt Metadata & Currency */}
-          <div className="grid grid-cols-3 gap-3 pb-6 border-b border-[#F2F0EA] text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 pb-6 border-b border-[#F2F0EA] text-xs">
             <div>
               <label className="block text-[#777777] mb-1">Currency</label>
               <select
@@ -968,7 +993,7 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
               <CreditCard className="w-3.5 h-3.5" /> Payment & Settlement
             </span>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               <div>
                 <label className="block text-[#777777] mb-1">
                   Discount ({currency})
@@ -1064,7 +1089,9 @@ export const ReceiptEditor: React.FC<ReceiptEditorProps> = ({ initialReceipt }) 
         </div>
 
         {/* RIGHT PANEL: Live WYSIWYG Receipt Preview */}
-        <div className="w-1/2 bg-[#EFECE6] overflow-y-auto p-6 sm:p-8 flex flex-col items-center justify-start print-only-container print:w-full print:bg-white print:p-0 print:overflow-visible">
+        <div className={`w-full lg:w-1/2 bg-[#EFECE6] overflow-y-auto p-4 sm:p-8 flex-col items-center justify-start print-only-container print:w-full print:bg-white print:p-0 print:overflow-visible ${
+          mobileTab === "form" ? "hidden lg:flex" : "flex"
+        }`}>
           <div className="w-full max-w-[595px] flex items-center justify-between mb-4 no-print gap-2">
             {/* Active Format Badge */}
             <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-[#DDD9CE] shadow-xs">

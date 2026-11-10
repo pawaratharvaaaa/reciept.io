@@ -137,17 +137,17 @@ export const ReceiptLibrary: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717]">Receipt Library</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#171717]">Receipt Library</h1>
           <p className="text-xs text-[#777777] mt-1">
             Search, filter, manage, or delete your historical sales and payment receipts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {selectedIds.size > 0 && (
             <button
               onClick={handleDeleteSelected}

@@ -114,7 +114,7 @@ export const ReceiptDetailView: React.FC<ReceiptDetailProps> = ({ id }) => {
   return (
     <div className="min-h-screen bg-[#F7F6F2]">
       {/* Top Action Bar */}
-      <div className="bg-white border-b border-[#E9E7E1] px-8 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 no-print">
+      <div className="bg-white border-b border-[#E9E7E1] px-3.5 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 no-print">
         <div className="flex items-center gap-3">
           <Link
             href="/receipts"
@@ -146,12 +146,12 @@ export const ReceiptDetailView: React.FC<ReceiptDetailProps> = ({ id }) => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
 
           {receipt.balanceDueMinor > 0 && (
             <button
               onClick={() => setIsPaymentModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#24845B] hover:bg-[#1E704C] text-white rounded-md text-xs font-medium transition shadow-xs"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[#24845B] hover:bg-[#1E704C] text-white rounded-md text-xs font-medium transition shadow-xs"
             >
               <CreditCard className="w-3.5 h-3.5" />
               <span>Record Payment</span>
@@ -160,7 +160,7 @@ export const ReceiptDetailView: React.FC<ReceiptDetailProps> = ({ id }) => {
 
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#171717] hover:bg-[#222222] text-white rounded-md text-xs font-medium transition shadow-xs"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[#171717] hover:bg-[#222222] text-white rounded-md text-xs font-medium transition shadow-xs"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print / PDF</span>
@@ -168,7 +168,7 @@ export const ReceiptDetailView: React.FC<ReceiptDetailProps> = ({ id }) => {
 
           <button
             onClick={handleDeleteReceipt}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300 rounded-md text-xs font-medium transition shadow-xs cursor-pointer"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 hover:border-rose-300 rounded-md text-xs font-medium transition shadow-xs cursor-pointer"
             title="Delete this receipt"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -178,7 +178,7 @@ export const ReceiptDetailView: React.FC<ReceiptDetailProps> = ({ id }) => {
       </div>
 
       {/* Main Document Preview Display - Centered and stripped of card borders when printing */}
-      <div className="max-w-4xl mx-auto py-10 px-4 flex justify-center print-only-container print:p-0 print:m-0 print:max-w-none print:w-full">
+      <div className="max-w-4xl mx-auto py-4 sm:py-10 px-2 sm:px-4 flex justify-center print-only-container print:p-0 print:m-0 print:max-w-none print:w-full">
         <div className="w-full max-w-[650px] shadow-lg rounded-xl overflow-hidden bg-white print-document-box print:shadow-none print:rounded-none print:border-none print:overflow-visible print:max-w-none print:w-full print:p-0">
           <ReceiptRenderer receipt={{ ...receipt, templateKey: activeTemplate }} />
         </div>

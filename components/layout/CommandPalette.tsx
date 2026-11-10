@@ -26,13 +26,11 @@ import { useAuth } from "@/lib/auth/auth-context";
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenIntro?: () => void;
 }
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
   isOpen,
   onClose,
-  onOpenIntro,
 }) => {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -100,13 +98,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       category: "Cloud",
       icon: Cloud,
       action: () => triggerSync(),
-    },
-    {
-      id: "intro",
-      title: "Play Liquid Glass Logo Reveal",
-      category: "Experience",
-      icon: Sparkles,
-      action: () => onOpenIntro?.(),
     },
     {
       id: "mode-gym",

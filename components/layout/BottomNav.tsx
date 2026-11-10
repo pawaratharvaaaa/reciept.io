@@ -18,19 +18,19 @@ import {
   UserCheck,
   ChevronRight,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { BUSINESS_CATEGORIES, BusinessCategoryKey } from "@/lib/business-categories";
 
 interface BottomNavProps {
   onOpenAuthModal?: () => void;
-  onOpenIntro?: () => void;
 }
 
-export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenIntro }) => {
+export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal }) => {
   const pathname = usePathname();
   const [moreDrawerOpen, setMoreDrawerOpen] = useState(false);
-  const { user, businessProfile, switchIndustry } = useAuth();
+  const { user, businessProfile, switchIndustry, logout } = useAuth();
 
   const currentCategory = (businessProfile?.businessCategory ||
     user?.businessCategory ||
@@ -45,23 +45,23 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
   return (
     <>
       {/* Fixed Bottom Navigation Bar - Mobile App Style */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-[#E9E7E1] z-40 px-2 py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-lg print:hidden">
-        <div className="flex items-center justify-around relative">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full max-w-full bg-white/95 backdrop-blur-xl border-t border-[#E9E7E1] z-40 px-1 py-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-lg print:hidden">
+        <div className="grid grid-cols-5 items-center w-full">
           {/* 1. Home */}
           <Link
             href="/"
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center justify-center py-1 transition ${
               isActive("/") ? "text-[#171717] font-bold" : "text-[#777777] hover:text-[#171717]"
             }`}
           >
             <LayoutDashboard className={`w-5 h-5 ${isActive("/") ? "stroke-[2.5]" : "stroke-2"}`} />
-            <span className="text-[10px] mt-0.5">Home</span>
+            <span className="text-[10px] mt-0.5 font-medium">Home</span>
           </Link>
 
           {/* 2. Receipts */}
           <Link
             href="/receipts"
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center justify-center py-1 transition ${
               isActive("/receipts") && pathname !== "/receipts/new"
                 ? "text-[#171717] font-bold"
                 : "text-[#777777] hover:text-[#171717]"
@@ -74,14 +74,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
                   : "stroke-2"
               }`}
             />
-            <span className="text-[10px] mt-0.5">Receipts</span>
+            <span className="text-[10px] mt-0.5 font-medium">Receipts</span>
           </Link>
 
           {/* 3. CENTER CREATE BUTTON (Native App FAB) */}
-          <div className="relative -top-3">
+          <div className="flex justify-center -mt-5">
             <Link
               href="/receipts/new"
-              className="flex items-center justify-center w-12 h-12 rounded-full bg-[#171717] text-white shadow-md active:scale-95 transition transform border-2 border-white"
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-[#171717] text-white shadow-xl shadow-black/20 active:scale-90 transition transform border-2 border-white cursor-pointer"
               title="Issue New Receipt"
             >
               <Plus className="w-6 h-6 stroke-[2.5]" />
@@ -91,7 +91,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
           {/* 4. Customers */}
           <Link
             href="/customers"
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center justify-center py-1 transition ${
               isActive("/customers")
                 ? "text-[#171717] font-bold"
                 : "text-[#777777] hover:text-[#171717]"
@@ -100,18 +100,19 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
             <Users
               className={`w-5 h-5 ${isActive("/customers") ? "stroke-[2.5]" : "stroke-2"}`}
             />
-            <span className="text-[10px] mt-0.5">Customers</span>
+            <span className="text-[10px] mt-0.5 font-medium">Clients</span>
           </Link>
 
           {/* 5. More App Drawer Trigger */}
           <button
+            type="button"
             onClick={() => setMoreDrawerOpen(true)}
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center justify-center py-1 transition cursor-pointer ${
               moreDrawerOpen ? "text-[#171717] font-bold" : "text-[#777777] hover:text-[#171717]"
             }`}
           >
             <Menu className="w-5 h-5 stroke-2" />
-            <span className="text-[10px] mt-0.5">More</span>
+            <span className="text-[10px] mt-0.5 font-medium">More</span>
           </button>
         </div>
       </nav>
@@ -157,7 +158,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
                   setMoreDrawerOpen(false);
                   onOpenAuthModal?.();
                 }}
-                className="flex items-center gap-2 p-3 rounded-xl bg-[#F7F6F2] hover:bg-[#E9E7E1] text-left transition"
+                className="flex items-center gap-2 p-3 rounded-xl bg-[#F7F6F2] hover:bg-[#E9E7E1] text-left transition cursor-pointer"
               >
                 <UserCheck className="w-4 h-4 text-blue-600" />
                 <span className="text-xs font-semibold text-[#171717]">Switch Account</span>
@@ -166,12 +167,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAuthModal, onOpenInt
               <button
                 onClick={() => {
                   setMoreDrawerOpen(false);
-                  onOpenIntro?.();
+                  logout();
                 }}
-                className="flex items-center gap-2 p-3 rounded-xl bg-purple-50 hover:bg-purple-100 text-left transition"
+                className="flex items-center gap-2 p-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-left transition cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                <span className="text-xs font-semibold text-purple-900">Replay Intro</span>
+                <LogOut className="w-4 h-4 text-rose-600" />
+                <span className="text-xs font-semibold text-rose-700">Log Out</span>
               </button>
             </div>
 

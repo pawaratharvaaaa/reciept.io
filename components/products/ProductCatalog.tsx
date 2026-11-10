@@ -170,17 +170,17 @@ export const ProductCatalog: React.FC = () => {
   );
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#171717]">Product Catalogue</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#171717]">Product Catalogue</h1>
           <p className="text-xs text-[#777777] mt-1">
             Maintain your reusable products, gym membership plans, retail items, and services.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {products.length > 0 && (
             <button
               onClick={handleDeleteAllProducts}
@@ -364,7 +364,7 @@ export const ProductCatalog: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#777777] mb-1">SKU / Item Code</label>
                   <input
@@ -394,7 +394,7 @@ export const ProductCatalog: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#777777] mb-1">Standard Rate ({currency}) *</label>
                   <input

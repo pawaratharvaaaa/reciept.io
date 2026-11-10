@@ -35,17 +35,15 @@ import { useCloudSync } from "@/lib/sync/sync-coordinator";
 interface FloatingNavbarProps {
   onOpenCommandPalette: () => void;
   onOpenAuthModal: () => void;
-  onOpenIntro: () => void;
 }
 
 export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
   onOpenCommandPalette,
   onOpenAuthModal,
-  onOpenIntro,
 }) => {
   const pathname = usePathname();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const { user, businessProfile, switchIndustry } = useAuth();
+  const { user, businessProfile, switchIndustry, logout } = useAuth();
   const { state: syncState, triggerSync, lastSyncedAt } = useCloudSync();
 
   const currentCategory = (businessProfile?.businessCategory ||
@@ -155,94 +153,130 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
   };
 
   return (
-    <div className="fixed top-3.5 left-0 right-0 z-50 flex justify-center px-3 sm:px-4 pointer-events-none no-print">
-      <nav className="pointer-events-auto flex items-center gap-2 sm:gap-3 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-black/10 shadow-2xl shadow-black/8 ring-1 ring-black/5 max-w-fit transition-all duration-300">
-        
-        {/* Left: Brand Icon */}
-        <Link
-          href="/"
-          className="flex items-center p-1 rounded-full hover:bg-black/5 transition group shrink-0"
-          title="Reciept.io Home"
-        >
-          <div className="w-8 h-8 rounded-full bg-[#090d16] flex items-center justify-center text-white overflow-hidden shadow-xs ring-1 ring-white/10 group-hover:scale-105 transition">
+    <>
+      {/* 1. Mobile Top App Header (Clean Edge-to-Edge Navigation for Phones) */}
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/95 backdrop-blur-xl border-b border-[#E9E7E1] z-50 flex items-center justify-between px-3.5 no-print shadow-2xs">
+        <Link href="/" className="flex items-center gap-2" title="Reciept.io Home">
+          <div className="w-8 h-8 rounded-full bg-[#090d16] flex items-center justify-center text-white overflow-hidden shadow-xs ring-1 ring-white/10 shrink-0">
             <span className="font-mono font-bold text-xs tracking-tight">R.</span>
           </div>
+          <span className="font-bold text-sm text-[#171717] tracking-tight truncate max-w-[170px]">
+            {businessProfile?.businessName || "reciept.io"}
+          </span>
         </Link>
 
-        {/* Divider */}
-        <div className="hidden md:block h-4 w-[1px] bg-black/10" />
-
-        {/* Center: Desktop Navigation Icon Dock with Smooth Sliding Spring Indicator */}
-        <div ref={navContainerRef} className="relative hidden md:flex items-center gap-1 sm:gap-1.5 px-0.5">
-          {/* Fluid Animated Sliding Indicator Pill - Pixel-perfect aligned */}
-          <div
-            className="absolute top-0 left-0 rounded-full bg-[#171717] shadow-xs pointer-events-none z-0"
-            style={{
-              transform: `translate3d(${pillStyle.left}px, ${pillStyle.top}px, 0)`,
-              width: `${pillStyle.width}px`,
-              height: `${pillStyle.height}px`,
-              opacity: pillStyle.opacity,
-              transition: isPillReady
-                ? "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 150ms ease"
-                : "opacity 150ms ease",
-            }}
-          />
-
-          {navItems.map((item) => {
-            const isItemActive = currentActive === item.href;
-            return (
-              <Link
-                key={item.href}
-                ref={(el) => {
-                  if (el) itemRefs.current.set(item.href, el);
-                  else itemRefs.current.delete(item.href);
-                }}
-                href={item.href}
-                onClick={(e) => {
-                  setOptimisticHref(item.href);
-                  measurePill(e.currentTarget);
-                }}
-                title={item.label}
-                aria-label={item.label}
-                className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200 select-none group cursor-pointer ${
-                  isItemActive
-                    ? "text-white"
-                    : "text-[#555555] hover:text-[#171717] hover:bg-black/5 active:scale-95"
-                }`}
-              >
-                <item.icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-105 group-active:scale-90" />
-                <span className="sr-only">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Divider */}
-        <div className="h-4 w-[1px] bg-black/10" />
-
-        {/* Right: Floating Controls */}
-        <div className="flex items-center gap-1 shrink-0">
-          {/* Spotlight Search Icon Button */}
+        <div className="flex items-center gap-1.5">
           <button
+            type="button"
             onClick={onOpenCommandPalette}
-            className="p-2 sm:p-2.5 rounded-full hover:bg-black/5 text-[#555555] hover:text-[#171717] transition cursor-pointer flex items-center justify-center"
-            title="Search commands (Ctrl+K / Cmd+K)"
-            aria-label="Search"
+            className="p-2 rounded-full hover:bg-black/5 text-[#555555] active:bg-black/10 transition cursor-pointer"
+            title="Search commands"
           >
             <Search className="w-4 h-4" />
           </button>
 
-          {/* Profile & Settings Dropdown Trigger */}
-          <div className="relative">
+          <button
+            type="button"
+            onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+            className="flex items-center p-0.5 rounded-full hover:bg-black/5 transition cursor-pointer"
+            title="Account & Settings"
+          >
+            <div className="w-7 h-7 rounded-full bg-[#171717] text-white flex items-center justify-center font-bold text-[11px] shadow-xs">
+              {(user?.fullName || "US").slice(0, 2).toUpperCase()}
+            </div>
+          </button>
+        </div>
+      </header>
+
+      {/* 2. Desktop Floating Island Navigation Dock */}
+      <div className="hidden md:flex fixed top-3.5 left-0 right-0 z-50 justify-center px-4 pointer-events-none no-print">
+        <nav className="pointer-events-auto flex items-center gap-2 sm:gap-3 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-xl border border-black/10 shadow-2xl shadow-black/8 ring-1 ring-black/5 max-w-fit transition-all duration-300">
+          
+          {/* Left: Brand Icon */}
+          <Link
+            href="/"
+            className="flex items-center p-1 rounded-full hover:bg-black/5 transition group shrink-0"
+            title="Reciept.io Home"
+          >
+            <div className="w-8 h-8 rounded-full bg-[#090d16] flex items-center justify-center text-white overflow-hidden shadow-xs ring-1 ring-white/10 group-hover:scale-105 transition">
+              <span className="font-mono font-bold text-xs tracking-tight">R.</span>
+            </div>
+          </Link>
+
+          {/* Divider */}
+          <div className="h-4 w-[1px] bg-black/10" />
+
+          {/* Center: Desktop Navigation Icon Dock with Smooth Sliding Spring Indicator */}
+          <div ref={navContainerRef} className="relative flex items-center gap-1 sm:gap-1.5 px-0.5">
+            {/* Fluid Animated Sliding Indicator Pill - Pixel-perfect aligned */}
+            <div
+              className="absolute top-0 left-0 rounded-full bg-[#171717] shadow-xs pointer-events-none z-0"
+              style={{
+                transform: `translate3d(${pillStyle.left}px, ${pillStyle.top}px, 0)`,
+                width: `${pillStyle.width}px`,
+                height: `${pillStyle.height}px`,
+                opacity: pillStyle.opacity,
+                transition: isPillReady
+                  ? "transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 150ms ease"
+                  : "opacity 150ms ease",
+              }}
+            />
+
+            {navItems.map((item) => {
+              const isItemActive = currentActive === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  ref={(el) => {
+                    if (el) itemRefs.current.set(item.href, el);
+                    else itemRefs.current.delete(item.href);
+                  }}
+                  href={item.href}
+                  onClick={(e) => {
+                    setOptimisticHref(item.href);
+                    measurePill(e.currentTarget);
+                  }}
+                  title={item.label}
+                  aria-label={item.label}
+                  className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200 select-none group cursor-pointer ${
+                    isItemActive
+                      ? "text-white"
+                      : "text-[#555555] hover:text-[#171717] hover:bg-black/5 active:scale-95"
+                  }`}
+                >
+                  <item.icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-105 group-active:scale-90" />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Divider */}
+          <div className="h-4 w-[1px] bg-black/10" />
+
+          {/* Right: Floating Controls */}
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Spotlight Search Icon Button */}
             <button
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center p-0.5 rounded-full hover:bg-black/5 transition cursor-pointer"
-              title="Account & Optimization Modes"
+              onClick={onOpenCommandPalette}
+              className="p-2 sm:p-2.5 rounded-full hover:bg-black/5 text-[#555555] hover:text-[#171717] transition cursor-pointer flex items-center justify-center"
+              title="Search commands (Ctrl+K / Cmd+K)"
+              aria-label="Search"
             >
-              <div className="w-8 h-8 rounded-full bg-[#171717] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                {(user?.fullName || "US").slice(0, 2).toUpperCase()}
-              </div>
+              <Search className="w-4 h-4" />
             </button>
+
+            {/* Profile & Settings Dropdown Trigger */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center p-0.5 rounded-full hover:bg-black/5 transition cursor-pointer"
+                title="Account & Optimization Modes"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#171717] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  {(user?.fullName || "US").slice(0, 2).toUpperCase()}
+                </div>
+              </button>
 
             {profileDropdownOpen && (
               <>
@@ -312,23 +346,23 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
                     <button
                       onClick={() => {
                         setProfileDropdownOpen(false);
-                        onOpenIntro();
-                      }}
-                      className="w-full flex items-center gap-2 p-2 rounded-xl text-purple-900 hover:bg-purple-50 transition text-left cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                      <span className="font-medium text-xs">Replay Liquid Glass Preloader</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
                         onOpenAuthModal();
                       }}
                       className="w-full flex items-center gap-2 p-2 rounded-xl text-[#171717] hover:bg-[#F7F6F2] transition text-left cursor-pointer"
                     >
                       <UserCheck className="w-3.5 h-3.5 text-blue-600" />
                       <span className="font-medium text-xs">Switch or Create Account</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-2 p-2 rounded-xl text-rose-700 hover:bg-rose-50 transition text-left cursor-pointer border-t border-[#F2F0EA] mt-1"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                      <span className="font-medium text-xs">Log Out (Lock Workspace)</span>
                     </button>
                   </div>
                 </div>
@@ -337,7 +371,8 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
           </div>
         </div>
       </nav>
-    </div>
+      </div>
+    </>
   );
 };
 

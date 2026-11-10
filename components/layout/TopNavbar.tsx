@@ -29,13 +29,11 @@ import { CloudSyncIndicator } from "./CloudSyncIndicator";
 interface TopNavbarProps {
   onOpenCommandPalette: () => void;
   onOpenAuthModal: () => void;
-  onOpenIntro: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenCommandPalette,
   onOpenAuthModal,
-  onOpenIntro,
 }) => {
   const pathname = usePathname();
   const [industryDropdownOpen, setIndustryDropdownOpen] = useState(false);
@@ -216,16 +214,6 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
           {/* Supabase Cloud Live Sync Indicator */}
           <CloudSyncIndicator />
-
-          {/* Replay Logo Reveal Preloader */}
-          <button
-            onClick={onOpenIntro}
-            className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 text-xs font-semibold transition cursor-pointer"
-            title="Replay Liquid Glass Preloader"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-            <span className="hidden xl:inline">Intro</span>
-          </button>
 
           {/* User Account / Profile Button */}
           <button

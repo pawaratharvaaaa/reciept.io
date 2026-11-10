@@ -29,12 +29,14 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultMode?: "signup" | "login" | "switch";
+  isDismissible?: boolean;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   defaultMode = "signup",
+  isDismissible = true,
 }) => {
   const { signUp, login, allUsers, switchAccount, user } = useAuth();
   const [mode, setMode] = useState<"signup" | "login" | "switch">(defaultMode);
@@ -173,7 +175,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && isDismissible) {
+          onClose();
+        }
+      }}
+    >
       <div className="bg-white rounded-2xl border border-[#E9E7E1] shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-5 my-8">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -183,7 +192,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 R.
               </span>
               <span className="font-mono text-[11px] uppercase tracking-wider text-[#777777] font-semibold flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Hardened SaaS Security
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                {!isDismissible ? "Authentication Required" : "Hardened SaaS Security"}
               </span>
             </div>
             <h2 className="text-xl font-bold tracking-tight text-[#171717]">
@@ -192,17 +202,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               {mode === "switch" && "Switch Active Account"}
             </h2>
             <p className="text-xs text-[#777777] mt-0.5">
-              {mode === "signup" && "Select what you use it for (listed or unlisted) with encrypted password protection."}
-              {mode === "login" && "Protected by brute-force rate limiting and zero-leak credentials."}
-              {mode === "switch" && "Choose an existing user profile or create a new one."}
+              {!isDismissible && !user
+                ? "Please sign in or create an account to start managing and issuing receipts."
+                : mode === "signup"
+                ? "Select what you use it for with encrypted password protection."
+                : mode === "login"
+                ? "Protected by brute-force rate limiting and zero-leak credentials."
+                : "Choose an existing user profile or create a new one."}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-md text-[#777777] hover:text-[#171717] hover:bg-[#F7F6F2] transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {isDismissible && (
+            <button
+              onClick={onClose}
+              className="p-1 rounded-md text-[#777777] hover:text-[#171717] hover:bg-[#F7F6F2] transition cursor-pointer"
+              title="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {errorMsg && (
