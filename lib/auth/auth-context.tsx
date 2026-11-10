@@ -34,6 +34,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const loadUserWorkspace = React.useCallback(async (targetUser: UserProfile) => {
+    setUser(targetUser);
+    localStorage.setItem("reciept_io_current_user_id", targetUser.id);
+
+    const org = await db.organizations.get(targetUser.organizationId);
+    if (org) {
+      setOrganization(org);
+    }
+
+    const bProfile = await db.businessProfiles
+      .filter((bp) => bp.organizationId === targetUser.organizationId)
+      .first();
+
+    if (bProfile) {
+      setBusinessProfile(bProfile);
+    }
+  }, []);
+
   // Load current session or default on mount
   useEffect(() => {
     async function initAuth() {
@@ -56,25 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     initAuth();
-  }, []);
-
-  const loadUserWorkspace = async (targetUser: UserProfile) => {
-    setUser(targetUser);
-    localStorage.setItem("reciept_io_current_user_id", targetUser.id);
-
-    const org = await db.organizations.get(targetUser.organizationId);
-    if (org) {
-      setOrganization(org);
-    }
-
-    const bProfile = await db.businessProfiles
-      .filter((bp) => bp.organizationId === targetUser.organizationId)
-      .first();
-
-    if (bProfile) {
-      setBusinessProfile(bProfile);
-    }
-  };
+  }, [loadUserWorkspace]);
 
   const login = async (email: string): Promise<boolean> => {
     const existing = await db.users.filter((u) => u.email.toLowerCase() === email.toLowerCase()).first();

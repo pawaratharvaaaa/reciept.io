@@ -852,7 +852,9 @@ export function GlassIconReveal({
   }, [look, background, logoColor, plateColor, iconPlate, keepPlate, originalColors, tileSize, logoScale, finalScale, hold, offsetKey, tuningKey])
 
   const live = React.useRef({ settings, loop, speed, time })
-  live.current = { settings, loop, speed, time }
+  React.useEffect(() => {
+    live.current = { settings, loop, speed, time }
+  }, [settings, loop, speed, time])
 
   React.useEffect(() => {
     const wrap = wrapRef.current
