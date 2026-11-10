@@ -19,9 +19,15 @@ interface AuthContextType {
     businessName: string;
     category: BusinessCategoryKey;
     defaultCurrency?: string;
+    phone?: string;
+    city?: string;
+    addressLine?: string;
+    taxIdentifier?: string;
+    receiptPrefix?: string;
   }) => Promise<boolean>;
   switchAccount: (userId: string) => Promise<void>;
   switchIndustry: (category: BusinessCategoryKey) => Promise<void>;
+  deleteAccount: (userId: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -57,13 +63,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async function initAuth() {
       await seedInitialDataIfEmpty();
 
+      // AUTO PURGE DEMO SEEDED ACCOUNT (Craft Studio & Labs / Rohan Mehta / admin@craftstudio.in)
+      try {
+        const demoUsers = await db.users.filter((u) =>
+          u.id === "usr-admin-01" ||
+          u.email.toLowerCase() === "admin@craftstudio.in" ||
+          u.email.toLowerCase() === "billing@craftstudio.in" ||
+          (u.businessName ? u.businessName.toLowerCase().includes("craft studio") : false) ||
+          (u.fullName ? u.fullName.toLowerCase().includes("rohan mehta") : false)
+        ).toArray();
+
+        for (const du of demoUsers) {
+          await db.users.delete(du.id);
+          if (du.organizationId) {
+            await db.organizations.delete(du.organizationId);
+            await db.businessProfiles.where("organizationId").equals(du.organizationId).delete();
+            await db.receipts.where("organizationId").equals(du.organizationId).delete();
+            await db.customers.where("organizationId").equals(du.organizationId).delete();
+            await db.products.where("organizationId").equals(du.organizationId).delete();
+            await db.payments.where("organizationId").equals(du.organizationId).delete();
+          }
+        }
+
+        // Clean up legacy default IDs directly
+        await db.users.delete("usr-admin-01");
+        await db.organizations.delete("org-default-001");
+        await db.businessProfiles.delete("biz-001");
+        const demoBiz = await db.businessProfiles.filter((bp) =>
+          bp.businessName ? bp.businessName.toLowerCase().includes("craft studio") : false
+        ).toArray();
+        for (const bp of demoBiz) {
+          await db.businessProfiles.delete(bp.id);
+        }
+        await db.receipts.where("organizationId").equals("org-default-001").delete();
+        await db.customers.where("organizationId").equals("org-default-001").delete();
+        await db.products.where("organizationId").equals("org-default-001").delete();
+        await db.payments.where("organizationId").equals("org-default-001").delete();
+      } catch (e) {
+        console.error("Purge demo account error:", e);
+      }
+
       const usersList = await db.users.toArray();
       setAllUsers(usersList);
 
       const savedUserId = localStorage.getItem("reciept_io_current_user_id");
       
       // If previous session was old dummy seeded user, purge it so zero accounts are active by default
-      if (savedUserId === "usr-admin-01") {
+      if (savedUserId === "usr-admin-01" || !usersList.some((u) => u.id === savedUserId)) {
         try {
           localStorage.removeItem("reciept_io_current_user_id");
         } catch (e) {}
@@ -103,12 +149,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     businessName,
     category,
     defaultCurrency = "INR",
+    phone,
+    city,
+    addressLine,
+    taxIdentifier,
+    receiptPrefix,
   }: {
     fullName: string;
     email: string;
     businessName: string;
     category: BusinessCategoryKey;
     defaultCurrency?: string;
+    phone?: string;
+    city?: string;
+    addressLine?: string;
+    taxIdentifier?: string;
+    receiptPrefix?: string;
   }): Promise<boolean> => {
     const categoryConfig = BUSINESS_CATEGORIES[category] || BUSINESS_CATEGORIES.custom;
 
@@ -131,11 +187,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       organizationId: orgId,
       businessName,
       businessCategory: category,
-      receiptPrefix: categoryConfig.receiptPrefix,
+      receiptPrefix: receiptPrefix?.trim() || categoryConfig.receiptPrefix,
       email,
+      phone: phone?.trim() || undefined,
+      taxIdentifier: taxIdentifier?.trim() || undefined,
       address: {
-        line1: "Main Street",
-        city: "Mumbai",
+        line1: addressLine?.trim() || "Main Street",
+        city: city?.trim() || "Mumbai",
         country: "India",
       },
     };
@@ -242,6 +300,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(updatedUser);
   };
 
+  const deleteAccount = async (userId: string) => {
+    try {
+      const targetUser = await db.users.get(userId);
+      if (targetUser) {
+        await db.users.delete(userId);
+
+        const otherUsersInOrg = await db.users.filter((u) => u.organizationId === targetUser.organizationId).count();
+        if (otherUsersInOrg === 0) {
+          await db.organizations.delete(targetUser.organizationId);
+          await db.businessProfiles.where("organizationId").equals(targetUser.organizationId).delete();
+          await db.receipts.where("organizationId").equals(targetUser.organizationId).delete();
+          await db.customers.where("organizationId").equals(targetUser.organizationId).delete();
+          await db.products.where("organizationId").equals(targetUser.organizationId).delete();
+          await db.payments.where("organizationId").equals(targetUser.organizationId).delete();
+        }
+
+        const remainingUsers = await db.users.toArray();
+        setAllUsers(remainingUsers);
+
+        if (user?.id === userId) {
+          try {
+            localStorage.removeItem("reciept_io_current_user_id");
+          } catch (e) {}
+
+          if (remainingUsers.length > 0) {
+            await loadUserWorkspace(remainingUsers[0]);
+          } else {
+            setUser(null);
+            setOrganization(null);
+            setBusinessProfile(null);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete account:", err);
+    }
+  };
+
   const logout = () => {
     try {
       localStorage.removeItem("reciept_io_current_user_id");
@@ -263,6 +359,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signUp,
         switchAccount,
         switchIndustry,
+        deleteAccount,
         logout,
       }}
     >

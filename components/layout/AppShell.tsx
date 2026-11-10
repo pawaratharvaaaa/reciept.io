@@ -35,6 +35,7 @@ const AppShellInner: React.FC<AppShellProps> = ({ children }) => {
   }, []);
 
   const isAuthRequired = !isLoading && !user;
+  const shouldShowAuthModal = !showPreloader && (authModalOpen || isAuthRequired);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F6F2] dark:bg-[#111111] text-[#171717] dark:text-[#F5F5F5] antialiased w-full max-w-full overflow-x-hidden transition-colors duration-200">
@@ -74,9 +75,9 @@ const AppShellInner: React.FC<AppShellProps> = ({ children }) => {
         />
       )}
 
-      {/* 6. Multi-Tenant Account & Profile Modal / Required Auth Gate */}
+      {/* 6. Multi-Tenant Account & Profile Modal / Required Auth Gate - Appears strictly AFTER preloader */}
       <AuthModal
-        isOpen={authModalOpen || isAuthRequired}
+        isOpen={shouldShowAuthModal}
         onClose={() => setAuthModalOpen(false)}
         defaultMode={user ? authModalMode : "signup"}
         isDismissible={!isAuthRequired}

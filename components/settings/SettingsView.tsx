@@ -33,7 +33,7 @@ import { ThermalPrinterEngine, ThermalPaperWidth } from "@/lib/printing/thermal-
 import { AuthModal } from "@/components/auth/AuthModal";
 
 export const SettingsView: React.FC = () => {
-  const { user, businessProfile, switchIndustry, logout, allUsers } = useAuth();
+  const { user, businessProfile, switchIndustry, logout, allUsers, deleteAccount } = useAuth();
   const { theme, setTheme } = useTheme();
 
   // Auth modal inside settings for switching / creating accounts
@@ -282,11 +282,25 @@ export const SettingsView: React.FC = () => {
               <button
                 type="button"
                 onClick={logout}
-                className="px-3.5 py-2 bg-rose-50 dark:bg-[#2B1414] hover:bg-rose-100 text-rose-700 dark:text-[#EB5757] border border-rose-200 dark:border-rose-900 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
+                className="px-3.5 py-2 bg-slate-100 dark:bg-neutral-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
                 title="Log out and return to sign in"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Log Out</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  if (confirm(`Permanently delete profile "${user.businessName}" (${user.email})? All local store data associated with this account will be erased.`)) {
+                    await deleteAccount(user.id);
+                  }
+                }}
+                className="px-3.5 py-2 bg-rose-50 dark:bg-[#2B1414] hover:bg-rose-100 text-rose-700 dark:text-[#EB5757] border border-rose-200 dark:border-rose-900 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
+                title="Delete this account"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Account</span>
               </button>
             </div>
           </div>
