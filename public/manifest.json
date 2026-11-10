@@ -1,0 +1,42 @@
+{
+  "name": "Reciept.io — Universal Receipt & Financial App",
+  "short_name": "Reciept.io",
+  "description": "Professional multi-tenant receipt generation, customer management and cloud accounting platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Receipt",
+      "url": "/receipts/new",
+      "description": "Issue a new professional sales or payment receipt"
+    },
+    {
+      "name": "Receipt Library",
+      "url": "/receipts",
+      "description": "View all issued receipts and transactions"
+    },
+    {
+      "name": "Customers",
+      "url": "/customers",
+      "description": "Manage your customer list"
+    }
+  ]
+}

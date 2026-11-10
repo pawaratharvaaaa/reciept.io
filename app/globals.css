@@ -1,0 +1,273 @@
+@import "tailwindcss";
+
+:root {
+  --background: #F7F6F2;
+  --surface: #FFFFFF;
+  --surface-muted: #F2F0EA;
+  --primary: #171717;
+  --primary-foreground: #FFFFFF;
+  --secondary: #777777;
+  --border: #E9E7E1;
+  --border-strong: #D3D0C6;
+  --accent: #222222;
+  --accent-foreground: #FFFFFF;
+  --success: #24845B;
+  --success-bg: #EAF5F0;
+  --warning: #B7791F;
+  --warning-bg: #FCF6EC;
+  --danger: #C64B4B;
+  --danger-bg: #FDF2F2;
+  --ring: #222222;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #111111;
+  --surface: #1A1A1A;
+  --surface-muted: #242424;
+  --primary: #F5F5F5;
+  --primary-foreground: #111111;
+  --secondary: #A1A1A1;
+  --border: #2B2B2B;
+  --border-strong: #3A3A3A;
+  --accent: #EAE7DF;
+  --accent-foreground: #111111;
+  --success: #34A853;
+  --success-bg: #14281E;
+  --warning: #F2994A;
+  --warning-bg: #2B2014;
+  --danger: #EB5757;
+  --danger-bg: #2B1414;
+  --ring: #EAE7DF;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Native App-like button and interaction feel */
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent accidental text selection on native app chrome */
+nav, header, aside, .app-chrome {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 9999px;
+}
+
+/* Print Stylesheet - Precision Centered & Thermal-Optimized */
+@media print {
+  @page {
+    size: auto;
+    margin: 0; /* Zero margin removes browser/driver offsets that push content off thermal rolls */
+  }
+
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Completely hide all UI elements, navigation, controls, headers, floating bars */
+  .no-print,
+  nav,
+  aside,
+  header,
+  button,
+  .print-hide,
+  [data-radix-popper-content-wrapper] {
+    display: none !important;
+  }
+
+  /* Reset outer layout containers so they never introduce offsets, padding, or card outlines */
+  main,
+  .app-main-content,
+  div[class*="rounded-3xl"],
+  div[class*="rounded-2xl"],
+  div[class*="overflow-hidden"],
+  div[class*="min-h-screen"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Centered Print Container: Positions the receipt dead-center in the middle of the page */
+  .print-only-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 4mm 0 !important;
+    background: #FFFFFF !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Printable Document Box - Centered horizontally, scale reset */
+  .print-document-box {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    transform: none !important;
+    margin: 0 auto !important;
+  }
+
+  /* Receipt Canvas - Strips all card outlines, borders, rounded corners, and shadows */
+  .receipt-printable-canvas {
+    display: block !important;
+    width: 100% !important;
+    max-width: 595px !important;
+    margin: 0 auto !important;
+    padding: 6mm !important;
+    background: #FFFFFF !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .receipt-card-wrapper,
+  .receipt-printable-canvas > div {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    background: #FFFFFF !important;
+  }
+
+  /* Strip any remaining decorative borders or shadows on printed card elements */
+  .receipt-printable-canvas [class*="rounded-xl"],
+  .receipt-printable-canvas [class*="rounded-2xl"],
+  .receipt-printable-canvas [class*="rounded-3xl"],
+  .receipt-printable-canvas [class*="shadow"] {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* ------------------------------------------------------------------------- */
+  /* Pocket Thermal Printer (58mm / 2-inch roll)                               */
+  /* Printable head width: 48mm (384 dots). Centered with zero edge trimming.  */
+  /* ------------------------------------------------------------------------- */
+  body[data-thermal-print="58mm"] {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    font-size: 9.5px !important;
+    line-height: 1.25 !important;
+  }
+
+  body[data-thermal-print="58mm"] .print-only-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  body[data-thermal-print="58mm"] .print-document-box {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  body[data-thermal-print="58mm"] .receipt-printable-canvas {
+    width: 48mm !important;
+    max-width: 48mm !important;
+    min-width: 48mm !important;
+    margin: 0 auto !important;
+    padding: 1.5mm 1mm !important;
+    box-sizing: border-box !important;
+    font-size: 9.5px !important;
+  }
+
+  /* Prevent any column overlap on thermal rolls */
+  body[data-thermal-print="58mm"] table {
+    width: 100% !important;
+    font-size: 9px !important;
+  }
+
+  body[data-thermal-print="58mm"] table th,
+  body[data-thermal-print="58mm"] table td {
+    padding-left: 1px !important;
+    padding-right: 1px !important;
+  }
+
+  /* ------------------------------------------------------------------------- */
+  /* Supermarket Counter POS Printer (80mm / 3-inch roll)                      */
+  /* Printable head width: 72mm (576 dots). Centered with zero edge trimming.  */
+  /* ------------------------------------------------------------------------- */
+  body[data-thermal-print="80mm"] {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  body[data-thermal-print="80mm"] .print-only-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  body[data-thermal-print="80mm"] .print-document-box {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  body[data-thermal-print="80mm"] .receipt-printable-canvas {
+    width: 72mm !important;
+    max-width: 72mm !important;
+    min-width: 72mm !important;
+    margin: 0 auto !important;
+    padding: 3mm 2mm !important;
+    box-sizing: border-box !important;
+    font-size: 11px !important;
+  }
+}
